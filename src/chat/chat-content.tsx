@@ -8,7 +8,11 @@ export const ChatContent = () => {
   const { messages, status } = useChatContext();
 
   return (
-    <CardContent className="flex flex-col h-[400px] overflow-y-auto mt-auto">
+    <CardContent
+      className={`flex flex-col flex-1 h-[400px] overflow-y-auto ${
+        messages.length === 0 ? "justify-center" : ""
+      }`}
+    >
       {messages.length === 0 ? (
         <div className="text-center text-gray-500">
           <FileText className="h-16 w-16 mx-auto mb-4 text-gray-300" />
