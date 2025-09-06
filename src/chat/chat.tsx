@@ -11,8 +11,24 @@ import { Send } from "lucide-react";
 import { ChatContent } from "./chat-content";
 
 export const Chat = () => {
-  const { sendMessage } = useChatContext();
+  const { status, setStatus, setMessages } = useChatContext();
   const [input, setInput] = useState("");
+
+  const onSubmitButton = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (input.trim()) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "user",
+          content: input,
+        },
+      ]);
+
+      setStatus("streaming");
+      setInput("");
+    }
+  };
 
   return (
     <Card className="flex flex-1 flex-col justify-between">
@@ -20,27 +36,14 @@ export const Chat = () => {
       <ChatContent />
 
       <CardFooter>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (input.trim()) {
-              sendMessage({ text: input });
-              setInput("");
-            }
-          }}
-          className="flex w-full gap-2"
-        >
+        <form onSubmit={onSubmitButton} className="flex w-full gap-2">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask a question about the product manual..."
             className="flex-1"
-            //disabled={status !== "ready"}
           />
-          <Button
-            type="submit"
-            //disabled={status !== "ready"}
-          >
+          <Button type="submit" disabled={status === "streaming"}>
             <Send className="h-4 w-4" />
           </Button>
         </form>

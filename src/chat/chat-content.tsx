@@ -3,10 +3,19 @@
 import { CardContent } from "@/components/ui/card";
 import { FileText } from "lucide-react";
 import { useChatContext } from "./chat-context";
+import { useEffect, useRef } from "react";
 
 export const ChatContent = () => {
   const { messages, status } = useChatContext();
 
+  const divRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    divRef.current?.scrollTo({
+      behavior: "smooth",
+      top: divRef.current.scrollHeight,
+    });
+  }, [messages.length]);
   return (
     <CardContent
       className={`flex flex-col flex-1 h-[400px] overflow-y-auto ${
@@ -34,10 +43,10 @@ export const ChatContent = () => {
           </div>
         </div>
       ) : (
-        <div className="space-y-4">
-          {messages.map((message) => (
+        <div className="space-y-4" ref={divRef}>
+          {messages.map((message, index) => (
             <div
-              key={message.id}
+              key={index}
               className={`flex ${
                 message.role === "user" ? "justify-end" : "justify-start"
               }`}
@@ -50,16 +59,7 @@ export const ChatContent = () => {
                 }`}
               >
                 <div className="whitespace-pre-wrap">
-                  {message.parts.map((part, i) => {
-                    switch (part.type) {
-                      case "text":
-                        return (
-                          <div key={`${message.id}-${i}`}>{part.text}</div>
-                        );
-                      default:
-                        return null;
-                    }
-                  })}
+                  <div>{message.content}</div>
                 </div>
               </div>
             </div>
